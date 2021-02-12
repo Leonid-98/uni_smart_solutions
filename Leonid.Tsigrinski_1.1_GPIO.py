@@ -9,6 +9,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(pin, GPIO.OUT)
 GPIO.output(pin, 0)
+time.sleep(1)
 
 
 def task1():
@@ -33,26 +34,12 @@ def task2():
         time.sleep(delay)
 
 
-# task 3
-# 7 segment led
-state = "0 - 9"
-number = 0  # current number
-while True:
-    if state == "0 - 9":
-        pass
-        # show 0 - 9
-        # if button:
-        #   state = "9 - 0"
+def task3():
+    # 10 segment led
+    global pin
 
-
-    elif state == "9 - 0":
-        pass
-        # change direction
-        # if button:
-        #   state = "random"
-
-    elif state == "random":
-        pass
-        # randomm show
-        # if button:
-        #   state = "0 - 9" # RESTORE
+    while True:
+        for led in pin:
+            GPIO.output(led, 1)  # ON
+            time.sleep(0.1)
+            GPIO.output(led, 0)  # OFF
