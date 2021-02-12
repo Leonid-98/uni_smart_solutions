@@ -4,6 +4,7 @@ import time
 import RPi.GPIO as GPIO
 
 pin = [18, 21]
+button = None
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(pin, GPIO.OUT)
