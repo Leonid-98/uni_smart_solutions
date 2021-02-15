@@ -47,7 +47,7 @@ def task3(delay):
             GPIO.output(led, 1)  # ON
             time.sleep(delay)
             GPIO.output(led, 0)  # OFF
-task3(0.02)
+task3(0.1)
             
             
 
