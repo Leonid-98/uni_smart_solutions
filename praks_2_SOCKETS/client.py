@@ -1,18 +1,37 @@
 import socket
+import sys
+import threading
 
-ip = "127.0.0.1"
+ip = "localhost"
 port = 12345
 
-client = socket.socket(
-    socket.AF_INET,
-    socket.SOCK_STREAM
-)
+try:
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((ip, port))
+except socket.error as msg:
+    print("Fail...\nCode: {}, Error: {}".format(msg.args[0], msg.args[1]))
+    sys.exit()
 
-client.connect(
-    (ip, port)
-)
+
+def get_data(client):
+    while True:
+        data = client.recv(2048)
+        print(data.decode("utf-8"))
+
+
+def send_data(client):
+    while True:
+        data = input().encode("utf-8")
+        client.send(data)
+
 
 while True:
+    # Initial message received
     data = client.recv(2048)
     print(data.decode("utf-8"))
 
+    getter = threading.Thread(target=get_data, args=(client,))
+    getter.start()
+
+    sender = threading.Thread(target=send_data, args=(client,))
+    sender.start()
