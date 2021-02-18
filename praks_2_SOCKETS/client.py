@@ -5,6 +5,11 @@ import threading
 ip = "localhost"
 port = 12345
 
+# if sys.argv[1]:
+#     ip = sys.argv[1]
+# if sys.argv[2]:
+#     port = int(sys.argv[2])
+
 try:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((ip, port))
