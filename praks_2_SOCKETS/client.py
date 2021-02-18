@@ -14,14 +14,18 @@ try:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((ip, port))
 except socket.error as msg:
-    print("Fail...\nCode: {}, Error: {}".format(msg.args[0], msg.args[1]))
+    print("<Code: {}, Error: {}>".format(msg.args[0], msg.args[1]))
     sys.exit()
 
 
 def get_data(client):
     while True:
-        data = client.recv(2048)
-        print(data.decode("utf-8"))
+        try:
+            data = client.recv(2048)
+            print(data.decode("utf-8"))
+        except ConnectionResetError as msg:
+            print("<Code: {}, Error: {}>".format(msg.args[0], msg.args[1]))
+            sys.exit()
 
 
 def send_data(client):
