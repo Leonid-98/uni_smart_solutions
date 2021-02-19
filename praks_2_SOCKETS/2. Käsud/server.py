@@ -60,11 +60,11 @@ def accept_data(client, connection):
 
                     last_task, last_state = message[0], message[1]
                     led_control(message[0], message[1])
-                    client.send(f"Doing task {message[0]}. State: {message[1]}".encode("utf-8"))
+                    client.send(f"Doing task {}. State: {}".format(message[0], message[1]).encode("utf-8"))
                 else:
                     if message[0] == last_task:
                         last_state = message[1]
-                        client.send(f"Doing task {message[0]}. State: {message[1]}".encode("utf-8"))
+                        client.send(f"Doing task {}. State: {}".format(message[0], message[1]).encode("utf-8"))
                     else:
                         client.send("Task is not available.".encode("utf-8"))
             else:
