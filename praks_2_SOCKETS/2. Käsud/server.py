@@ -1,9 +1,14 @@
-import sys
 import socket
+import sys
 import threading
+from select import select
 
 ip = "localhost"
 port = 9999
+
+states = ["initial", "initial"]
+inactive_tasks = ["task1", "task2"]
+clients = []
 
 try:
     socket_server = socket.socket()
@@ -17,20 +22,52 @@ except socket.error as msg:
     sys.exit()
 
 
+def led_control(task, new_state):
+    global state, tasks, active_tasks, clients
+
+    if task == "task1":
+        print("Yeah baby, task 1", state)
+    elif task == "task2":
+        print("Nooo way 2nd task", state)
+
+
 def accept_data(client, connection):
+    global state, tasks, active_tasks, clients
+
+    last_task = None
+    last_state = None
+
     client_ip = connection[0]
     client_port = connection[1]
     print("<{}: {} Connected.>".format(client_ip, client_port))
 
     while True:
-        data = client.recv(1024)
-        decoded_data = data.decode("utf-8")
+        ready_sockets, _, _ = select([client], [], [], 1)  # timeout 1s
 
-        if decoded_data == 'exit':
-            break
-        print("({}: {}): {}".format(client_ip, client_port, decoded_data))
-        client.sendall(data)
+        if ready_sockets:
+            data = client.recv(4096)
+            decoded_data = data.decode("utf-8")
+            if decoded_data == "exit": break
+            print("({}: {}): {}".format(client_ip, client_port, decoded_data))
+            message = decoded_data.split()
 
+            if message[0] in ["task1", "task2"] and len(message) == 2:
+                if message[0] in inactive_tasks:
+
+                    index = inactive_tasks.index(message[0])
+                    message[0] = inactive_tasks.pop(index)
+                    client.send(f"<Doing task {message[0]}>".encode("utf-8"))
+                    last_task, last_state = message[0], message[1]
+                    led_control(message[0], message[1])
+                else:
+                    client.send("<Task is not available.>".encode("utf-8"))
+            else:
+                client.send(data)
+        else:
+            led_control(last_task, last_state)
+
+    if message[0]:
+        inactive_tasks.append(message[0])
     print("<{}: {} Disconnected.>".format(client_ip, client_port))
     client.close()
 
@@ -41,6 +78,7 @@ while True:
         # threading._start_new_thread(accept_data, (client, ip))
         accepter = threading.Thread(target=accept_data, args=(client, ip))
         accepter.start()
+        clients.append(client)
 
     except socket.error as msg:
         print("<Code: {}, Error: {}>".format(msg.args[0], msg.args[1]))

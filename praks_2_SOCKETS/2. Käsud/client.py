@@ -22,5 +22,5 @@ while True:
         print("<Client disconnected>")
         break
 
-    server_response = client_socket.recv(1024)
+    server_response = client_socket.recv(4096)
     print("<Server received: {}>".format(server_response.decode()))
