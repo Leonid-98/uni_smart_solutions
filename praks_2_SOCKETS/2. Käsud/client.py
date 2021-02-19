@@ -14,6 +14,11 @@ except socket.error as msg:
     print("<Code: {}, Error: {}>".format(msg.args[0], msg.args[1]))
     sys.exit()
 
+def accept_response(client_socket):
+    server_response = client_socket.recv(4096)
+    print("Server response: {}".format(server_response.decode()))
+
+
 while True:
     data = input("::: ")
     client_socket.send(data.encode('utf-8'))
@@ -22,5 +27,6 @@ while True:
         print("<Client disconnected>")
         break
 
-    server_response = client_socket.recv(4096)
-    print("<Server received: {}>".format(server_response.decode()))
+    response_getter = threading.Thread(target=accept_response, args=(client_socket,))
+    response_getter.start()
+
