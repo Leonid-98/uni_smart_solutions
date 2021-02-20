@@ -48,7 +48,7 @@ def accept_data(client, connection):
             if decoded_data == "exit":
                 break
             if decoded_data == "?":
-                client.send({inactive_tasks}.encode("utf-8"))
+                client.send("Available tasks: {}".format(inactive_tasks).encode("utf-8"))
 
             print("({}: {}): {}".format(client_ip, client_port, decoded_data))
             message = decoded_data.split()
@@ -60,15 +60,16 @@ def accept_data(client, connection):
 
                     last_task, last_state = message[0], message[1]
                     led_control(message[0], message[1])
-                    client.send(f"Doing task {}. State: {}".format(message[0], message[1]).encode("utf-8"))
+                    client.send("Doing task {}. State: {}".format(message[0], message[1]).encode("utf-8"))
                 else:
                     if message[0] == last_task:
                         last_state = message[1]
-                        client.send(f"Doing task {}. State: {}".format(message[0], message[1]).encode("utf-8"))
+                        client.send("Doing task {}. State: {}".format(message[0], message[1]).encode("utf-8"))
                     else:
                         client.send("Task is not available.".encode("utf-8"))
             else:
-                client.send(data)
+                if decoded_data != "?":
+                    client.send(data)
         else:
             led_control(last_task, last_state)
 
