@@ -1,11 +1,15 @@
 import socket
 import sys
 import threading
+import time
 from select import select
 
+try:
+    port = int(sys.argv[1])
+except IndexError:
+    port = 9999
+
 ip = "localhost"
-port = 9999
-inactive_tasks = ["task1", "task2"]
 
 try:
     socket_server = socket.socket()
@@ -19,27 +23,18 @@ except socket.error as msg:
     sys.exit()
 
 
-def led_control(task, new_state):
-    global state, tasks, active_tasks, clients
-
-    if task == "task1":
-        print("Yeah baby, task 1", new_state)
-    elif task == "task2":
-        print("Nooo way 2nd task", new_state)
-
-
-
+inactive_tasks = ["task1", "task2"]
 def accept_data(client, connection):
     global inactive_tasks
 
     client_ip = connection[0]
     client_port = connection[1]
-    last_task, last_state = None, None
+    last_task, last_state, delay = None, None, 0
 
     print("<{}: {} Connected.>".format(client_ip, client_port))
 
     while True:
-        ready_sockets, _, _ = select([client], [], [], 1)  # timeout 1s
+        ready_sockets, _, _ = select([client], [], [], 0.01)  # timeout 1s
 
         if ready_sockets:
             data = client.recv(4096)
@@ -53,30 +48,62 @@ def accept_data(client, connection):
             print("({}: {}): {}".format(client_ip, client_port, decoded_data))
             message = decoded_data.split()
 
-            if message[0] in ["task1", "task2"] and len(message) == 2:
+            if message[0] in ["task1", "task2"] and len(message) == 3:
                 if message[0] in inactive_tasks:
                     index = inactive_tasks.index(message[0])
                     message[0] = inactive_tasks.pop(index)
 
-                    last_task, last_state = message[0], message[1]
-                    led_control(message[0], message[1])
+                    last_task, last_state, delay = message[0], message[1], message[2]
+                    led_control(message[0], message[1], message[2])
                     client.send("Doing task {}. State: {}".format(message[0], message[1]).encode("utf-8"))
                 else:
                     if message[0] == last_task:
-                        last_state = message[1]
-                        client.send("Doing task {}. State: {}".format(message[0], message[1]).encode("utf-8"))
+                        last_state, delay = message[1], message[2]
+                        client.send(
+                            "Doing task {}. State: {}. Delay: {}".format(message[0], message[1], message[2]).encode(
+                                "utf-8"))
                     else:
                         client.send("Task is not available.".encode("utf-8"))
             else:
                 if decoded_data != "?":
                     client.send(data)
         else:
-            led_control(last_task, last_state)
+            led_control(last_task, last_state, delay)
 
-    if message[0]:
-        inactive_tasks.append(message[0])
     print("<{}: {} Disconnected.>".format(client_ip, client_port))
     client.close()
+    if message[0]:
+        inactive_tasks.append(message[0])
+
+
+number = 0
+def led_control(task, state, delay):
+    global tasks, active_tasks, number
+    delay = float(delay)
+
+    if task == "task1":
+        if state == "stop":
+            pass
+
+        elif state == "start":
+            print("task1", state, delay)
+            time.sleep(delay)
+
+    elif task == "task2":
+        if state == "stop":
+            pass
+
+        elif state == "from_0":
+            print("task1", state, delay)
+            time.sleep(delay)
+
+        elif state == "from_9":
+            print("task1", state, delay)
+            time.sleep(delay)
+
+        elif state == "random":
+            print("task1", state, delay)
+            time.sleep(delay)
 
 
 while True:
