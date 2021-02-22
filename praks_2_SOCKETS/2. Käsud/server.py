@@ -37,7 +37,7 @@ try:
 except IndexError:
     port = 9999
 
-ip = "192.168.43.61"
+ip = ""
 
 try:
     socket_server = socket.socket()
