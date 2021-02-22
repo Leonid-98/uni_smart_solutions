@@ -3,13 +3,41 @@ import sys
 import threading
 import time
 from select import select
+import RPi.GPIO as GPIO
+from random import randrange
+
+pin_led = [23, 24]
+pin_matrix = [25, 16, 20, 21, 26, 6, 5]
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+GPIO.setup(pin_led, GPIO.OUT)
+GPIO.output(pin_led, 0)
+
+GPIO.setup(pin_matrix, GPIO.OUT)
+GPIO.output(pin_matrix, 1)
+
+d = {
+        1: [16, 20], 
+        2: [25, 16, 26, 6, 5], 
+        3: [16, 20, 26, 6, 5], 
+        4: [20, 16, 21, 5], 
+        5: [20, 21, 26, 6, 5],
+        6: [25, 21, 26, 6, 5, 20], 
+        7: [16, 20, 26], 
+        8: [25, 16, 20, 21, 26, 6, 5],
+        9: [20, 16, 21, 26, 6, 5],
+        0: [25, 16, 20, 21, 26, 6]
+    }
+
 
 try:
     port = int(sys.argv[1])
 except IndexError:
     port = 9999
 
-ip = "localhost"
+ip = "192.168.43.61"
 
 try:
     socket_server = socket.socket()
@@ -78,41 +106,62 @@ def accept_data(client, connection):
 
 number = 0
 def led_control(task, state, delay):
-    global tasks, active_tasks, number
+    global tasks, active_tasks, number, pin_led, pin_matrix, d
     delay = float(delay)
 
     if task == "task1":
         if state == "stop":
-            pass
+            GPIO.output(pin_led, 0)
 
-        elif state == "start":
-            print("task1", state, delay)
+        elif state == "eraldi":
+            GPIO.output(pin_led[0], 1)
+            GPIO.output(pin_led[1], 0)
+            time.sleep(delay)
+            GPIO.output(pin_led[0], 0)
+            GPIO.output(pin_led[1], 1)
+            time.sleep(delay)
+            
+        elif state == "koos":
+            GPIO.output(pin_led[0], 1)
+            GPIO.output(pin_led[1], 1)
+            time.sleep(delay)
+            GPIO.output(pin_led[0], 0)
+            GPIO.output(pin_led[1], 0)
             time.sleep(delay)
 
     elif task == "task2":
         if state == "stop":
-            pass
+            GPIO.output(pin_matrix, 1)
 
         elif state == "from_0":
-            print("task1", state, delay)
+            if number == 10: number = 0  # reset
+            GPIO.output(pin_matrix, 1)
+            GPIO.output(d[number], 0)
+            number += 1
             time.sleep(delay)
+            GPIO.output(pin_matrix, 1)
 
         elif state == "from_9":
-            print("task1", state, delay)
+            if number == -1: number = 9  # reset
+            GPIO.output(pin_matrix, 1)
+            GPIO.output(d[number], 0)
+            number -= 1
             time.sleep(delay)
+            GPIO.output(pin_matrix, 1)
 
         elif state == "random":
-            print("task1", state, delay)
-            time.sleep(delay)
-
+            number = randrange(0, 10, 1)
+            GPIO.output(pin_matrix, 1)
+            GPIO.output(d[number], 0)
+            time.sleep(0.5)
+            GPIO.output(pin_matrix, 1)
 
 while True:
     try:
         client, ip = socket_server.accept()
-        # threading._start_new_thread(accept_data, (client, ip))
         accepter = threading.Thread(target=accept_data, args=(client, ip))
         accepter.start()
-
+        
     except socket.error as msg:
         print("<Code: {}, Error: {}>".format(msg.args[0], msg.args[1]))
         sys.exit()
