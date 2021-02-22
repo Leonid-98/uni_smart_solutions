@@ -6,7 +6,7 @@ try:
     ip = sys.argv[1]
     port = int(sys.argv[2])
 except IndexError:
-    ip = "localhost"
+    ip = "192.168.43.61"
     port = 9999
 
 try:
