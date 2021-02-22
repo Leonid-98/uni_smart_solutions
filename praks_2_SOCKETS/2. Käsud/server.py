@@ -62,7 +62,7 @@ def accept_data(client, connection):
     print("<{}: {} Connected.>".format(client_ip, client_port))
 
     while True:
-        ready_sockets, _, _ = select([client], [], [], 0.01)  # timeout 1s
+        ready_sockets, _, _ = select([client], [], [], 0.01)  # timeout
 
         if ready_sockets:
             data = client.recv(4096)
