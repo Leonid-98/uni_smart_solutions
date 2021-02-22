@@ -16,7 +16,7 @@ GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 def show_number(number):
-    global pin
+    global pin_matrix
     
     d = {
         1: [22, 25],

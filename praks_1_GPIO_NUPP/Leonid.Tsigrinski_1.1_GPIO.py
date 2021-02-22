@@ -1,7 +1,7 @@
 import time
 import RPi.GPIO as GPIO
 
-pin = [4, 18, 17, 27, 23, 22, 24, 25, 19, 26]
+pin = [23, 24]
 delay = 0.5  # 1 Hz // 0.5 + 0.5
 
 GPIO.setmode(GPIO.BCM)
@@ -32,22 +32,24 @@ def task2():
         GPIO.output(pin[0], 0)
         GPIO.output(pin[1], 1)
         time.sleep(delay)
+        
+task2()
 
 
-def task3(delay):
-    # 10 segment led
-    global pin
+# def task3(delay):
+#     # 10 segment led
+#     global pin
+# 
+#     while True:
+#         for led in pin:
+#             GPIO.output(led, 1)  # ON
+#             time.sleep(delay)
+#             GPIO.output(led, 0)  # OFF
+#         for led in reversed(pin):
+#             GPIO.output(led, 1)  # ON
+#             time.sleep(delay)
+#             GPIO.output(led, 0)  # OFF
 
-    while True:
-        for led in pin:
-            GPIO.output(led, 1)  # ON
-            time.sleep(delay)
-            GPIO.output(led, 0)  # OFF
-        for led in reversed(pin):
-            GPIO.output(led, 1)  # ON
-            time.sleep(delay)
-            GPIO.output(led, 0)  # OFF
-task3(0.1)
             
             
 
