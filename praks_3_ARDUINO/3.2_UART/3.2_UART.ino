@@ -11,7 +11,6 @@ void loop() {
 		data += rec;
 		
 		if (rec == '\n') {
-			Serial.print("Message received: ");
 			Serial.println(data);
 			data = "";
 		}
