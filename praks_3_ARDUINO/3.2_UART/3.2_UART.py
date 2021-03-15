@@ -1,17 +1,21 @@
 import serial
-import threading
 import time
-import sys
 
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=5)
-ser.flush()
 
-    
+state = True
+ser=serial.Serial('/dev/ttyS0' ,9600)
+
 while True:
-    data = chr(input("::: "))
-    ser.write(data.encode())
+    if state:
+        sonum = input("::: ")
+        ser.write(sonum.encode('ascii'))
+        time.sleep(0.2)
+        state = False
+        
+    if ser.inWaiting():
+        read_serial=ser.read(ser.inWaiting())
+        state = True
+        print (read_serial.decode('ascii'))
 
-
-
-
+    time.sleep(2)
 

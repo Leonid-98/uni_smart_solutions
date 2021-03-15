@@ -1,41 +1,54 @@
-//
-//#include "U8glib.h"
-//U8GLIB_SSD1306_128X32 u8g(U8G_I2C_OPT_NONE);
-////U8X8_SSD1306_128X32_UNIVISION_SW_I2C u8x8(/* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE); 
-//
-//void setup(){
-//  u8g.setFont(u8g_font_unifont);
-//  u8g.setPrintPos(0, 20);}
-//
-//void loop() {
-//  u8g.firstPage();
-//  do {
-//    u8g.print("123");
-//    } while (u8g.nextPage());
-//  delay(500);
-//
-//  }
+#include <SoftwareSerial.h>
+int state = 0;
+SoftwareSerial mySerial(5, 6);
+String data;
+int led = 12;
 
-//#include <SPI.h>
-//#include <Wire.h>
-//#include <Adafruit_SSD1306.h>
-// 
-//#define OLED_RESET 4
-//Adafruit_SSD1306 display(OLED_RESET);
-// 
-//void setup() {
-//  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-//}
-// 
-//void loop() {
-//  display.clearDisplay();
-//  display.setTextSize(2);
-//  display.setTextColor(WHITE);
-//  display.setCursor(0,0);
-//  display.print("123");
-//  display.display();
-//  delay(10000);
-//}
 
-String nom = "Arduino";
-String msg
+void setup() {
+pinMode(led, OUTPUT);
+mySerial.begin(9600);
+Serial.begin(9600);
+}
+
+void loop() {
+  if (mySerial.available()){
+    data = mySerial.readStringUntil('\n');
+    Serial.println(data);
+
+    if (data == "on"){
+      Serial.println("led on");
+      if (state == 0){
+        digitalWrite(led, HIGH);
+        mySerial.println("Led is on now");
+        state = 1;
+      }
+      else{
+        mySerial.println("Led is already on");
+      }
+    }
+    else if (data ==  "off"){
+      if (state == 1){
+        digitalWrite(led, LOW);
+        mySerial.println("Led is off now");
+        state = 0;
+      }
+      else{
+        mySerial.println("Led is already off");
+      }
+    }
+    else if (data == "state"){
+      if (state == 0){
+        mySerial.println("Led is off");
+      }
+      else{
+        mySerial.println("Led is on");
+      }
+    }
+  }  
+
+  delay(500);
+  
+  if (Serial.available()){
+    mySerial.println(Serial.readStringUntil('\n'));}
+}
