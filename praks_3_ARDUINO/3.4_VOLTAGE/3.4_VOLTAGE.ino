@@ -22,8 +22,6 @@ void loop() {
 }
 
 void showData(float data){
-    Serial.println(data);
-    Serial.println();
     display.clearDisplay();
     display.setCursor(0, 0);
     display.print(data);

@@ -3,7 +3,7 @@ import time
 
 
 state = True
-ser=serial.Serial('/dev/ttyS0' ,9600)
+ser=serial.Serial('/dev/serial0' ,9600)
 
 while True:
     if state:
