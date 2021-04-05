@@ -25,13 +25,11 @@ void loop() {
   distance = microsecondsToCentimeters(duration);
   
   
-  
-//  if (Serial.available()){
-//    mySerial.print(Serial.readString());
-//    }
-  mySerial.print(distance);
-  Serial.println(distance);
-  delay(1000);
+  if (mySerial.available()){
+    Serial.println(distance);
+    mySerial.println(distance);
+    }
+
 
 }
 

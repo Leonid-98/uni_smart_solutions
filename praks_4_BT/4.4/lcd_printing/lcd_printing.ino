@@ -15,9 +15,13 @@ void setup() {
 }
 
 void loop() {
+  mySerial.print("");
+  
   if (mySerial.available()) {
     data = mySerial.readString();
     lcd.clear();
+    lcd.setCursor(0, 0);
     lcd.print(data + " cm");
     }
+   delay(500);
 }
