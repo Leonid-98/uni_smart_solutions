@@ -2,9 +2,8 @@
 #include <IRremote.h>
 #include <IRremoteInt.h>
 
-const int OUT = 8;
-int RECV_PIN = 4;
-boolean state = false;
+const int OUT = 5;
+int RECV_PIN = 11;
 
 IRrecv receiver(RECV_PIN);
 decode_results results;
@@ -12,21 +11,18 @@ decode_results results;
 void setup() {
   pinMode(OUT, OUTPUT);
   receiver.enableIRIn();
+  Serial.begin(9600);
 }
 
 void loop() {
   if (receiver.decode(&results)) {
-    if (state) {
-      digitalWrite(OUT, LOW);
-      state = false;
-    }
-
-    if (!state) {
+    if (results.value == 0x29D) {
       digitalWrite(OUT, HIGH);
-      state = true;
     }
+    if (results.value == 0x25D) {
+      digitalWrite(OUT, LOW);
+    }
+    Serial.println(results.value, HEX);
+    receiver.resume();
   }
-  delay(500);
-  receiver.resume();
-  Serial.println(state);
 }

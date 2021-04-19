@@ -2,8 +2,8 @@
 #include <IRremote.h>
 #include <IRremoteInt.h>
 
-const int OUT = 8;
-int RECV_PIN = 4;
+const int OUT = 5;
+int RECV_PIN = 11;
 
 IRrecv receiver(RECV_PIN);
 decode_results results;
@@ -11,6 +11,7 @@ decode_results results;
 void setup() {
   pinMode(OUT, OUTPUT);
   receiver.enableIRIn();
+  Serial.begin(9600);
 }
 
 void loop() {
