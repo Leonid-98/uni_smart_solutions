@@ -46,19 +46,14 @@ void loop() {
 //  String saadetud=Serial.readString();
 //  client.println(saadetud+"\r");
 //  Serial.println(saadetud);
-  val = analogRead(tmpPin);
   Serial.print(val);
   Serial.print(" ");
-  mv=val*3300/1024;
   Serial.print(" ");
   Serial.print(mv);
   Serial.print("  ");
-  cel=mv/10;
   
   Serial.print("Temp: ");
-  Serial.print(cel);
   Serial.println("*C");
-  client.println(String(cel)+"\r");
   String answer = client.readStringUntil('\r');
   Serial.println("From the AP: " + answer);
   client.flush();
