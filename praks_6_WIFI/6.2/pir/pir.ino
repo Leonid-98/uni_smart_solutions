@@ -13,7 +13,7 @@ bool led_state = false;
 void setup() {
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, pass);           // connects to the WiFi AP
+  WiFi.begin(ssid, pass);
   Serial.println();
   Serial.println("Connection to the AP");
   while (WiFi.status() != WL_CONNECTED) {

@@ -20,7 +20,6 @@ void setup() {
   server.begin();
 
   Serial.println();
-  Serial.println("accesspoint_bare_01.ino");
   Serial.println("Server started.");
   Serial.print("IP: ");     Serial.println(WiFi.softAPIP());
   Serial.print("MAC:");     Serial.println(WiFi.softAPmacAddress());
@@ -55,7 +54,10 @@ void loop() {
 
   if (request.equals("pir")) {
     Serial.println("Movement detected");
-    client.println("Ap responce\r");
+  }
+  if (request.equals("led"))  {
+	 Serial.println("Request from led");
+	 client.println("Responce for led\r");
   }
 
   client.flush();
