@@ -35,7 +35,6 @@ void setup() {
 }
 
 void loop() {
-  client.connect(server, 80);
 
   digitalWrite(trigPin, LOW);
   delayMicroseconds(5);
@@ -46,6 +45,8 @@ void loop() {
   distance = duration * 0.034 / 2;
 
   if (distance <= 20  &&  !in_motion) {
+    client.connect(server, 80);
+
     led_state = !led_state;
     if (led_state) {
       client.println("us_on\r");;
@@ -53,6 +54,8 @@ void loop() {
       client.println("us_off\r");
     }
 
+    client.flush();
+    client.stop();
     in_motion = true;
   }
   if (distance > 20  &&  in_motion) {
@@ -61,7 +64,5 @@ void loop() {
 
   //String answer = client.readStringUntil('\r');
   //Serial.println("From the AP: " + answer);
-  client.flush();
-  client.stop();
-  delay(2000);
+  delay(500);
 }
