@@ -11,9 +11,11 @@
 WiFiServer server(80);
 IPAddress IP(192, 168, 4, 15);
 IPAddress mask = (255, 255, 255, 0);
-String us_state = "off";
-boolean led_on = false;
-int count = 0;
+
+boolean start_timer = false;
+unsigned long timer_start;
+unsigned long timer_end;
+String led_state = "off";
 
 void setup() {
   Serial.begin(115200);
@@ -29,44 +31,53 @@ void setup() {
 }
 
 void loop() {
-  WiFiClient client = server.available();
-  if (!client) {
-    return;
-  }
+	WiFiClient client = server.available();
+	if (!client) {
+	return;
+	}
 
-  String request = client.readStringUntil('\r');
-  Serial.println(request);
+	String request = client.readStringUntil('\r');
+	Serial.println(request);
+	
+	if (start_timer) {
+		timer_end = millis();
+		int time = timer_end - timer_start;
+		Serial.println(time);
+		led_state = "on";
+		if (time > 10000) {
+			start_timer = false;
+			led_state = "off";
+		}
+	}
+	
+	if (request.equals("led"))  {
+	client.println(led_state + "\r");
+	}
+	
+	if (request.equals("pir")){
+			start_timer = true;
+          	timer_start = millis();
+		}
+		
+	
+	if (request.equals("us_on")){
+          	if (start_timer) {
+				start_timer = false;
+				led_state = "on";
+				//timer_start = millis();
+			} else {
+				led_state = "on";
+			}
+		}
 
-  if (request.equals("us_on")) {
-    us_state = "on";
-  }
-  if (request.equals("us_off")) {
-    us_state = "off";
-  }
-
-  if (request.equals("pir")) {
-    led_on = true;
-
-  }
-  if (led_on) {
-    ledOn();
-  }
-
-  if (request.equals("led"))  {
-    client.println(us_state + "\r");
-  }
-  Serial.println(us_state);
-
-}
-
-void ledOn() {
-  if (count < 10) {
-    us_state = "on";
-    delay(1);
-    count++;
-  } else {
-    count = 0;
-    led_on = false;
-    us_state = "off";
-  }
+	if (request.equals("us_off")){
+          	if (start_timer) {
+				start_timer = false;
+				led_state = "off";
+			} else {
+				led_state = "off";
+			}
+		}
+ } 
+ Serial.println(us_state);
 }

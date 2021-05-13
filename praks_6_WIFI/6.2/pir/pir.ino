@@ -49,10 +49,6 @@ void loop() {
     if (measure.RangeMilliMeter > 1000  &&  in_motion) {
       in_motion = false;
     }
-
-
-
   }
-
   delay(100);
 }
