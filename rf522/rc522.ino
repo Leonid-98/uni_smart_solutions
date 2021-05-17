@@ -17,7 +17,7 @@ unsigned long hex_num;
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 Servo servo;
 int pos = 0;
-
+boolean closed = true;
 
 
 void setup() {
@@ -44,13 +44,13 @@ void loop() {
   hex_num += mfrc522.uid.uidByte[2] <<  8;
   hex_num += mfrc522.uid.uidByte[3];
   mfrc522.PICC_HaltA(); // Stop reading
-  Serial.println(hex_num, HEX);
+  Serial.print(hex_num, HEX);
 
   if (isAccess()) {
-    Serial.println("Autorized access!");
+    Serial.println(": Autorized access!");
     openTheDoor();
   } else {
-    Serial.println("Access denied!");
+    Serial.println(": Access denied!");
   }
 
 
@@ -66,13 +66,21 @@ boolean isAccess() {
 }
 
 void openTheDoor() {
-  for (pos = 0; pos <= 90; pos += 1) {
-    servo.write(pos);
-    delay(20);
+  if (closed) {
+    for (pos = 0; pos <= 90; pos += 1) {
+      servo.write(pos);
+      delay(20);
+    }
+    closed = false;
+    return;
   }
-  delay(3000);
-  for (pos = 90; pos >= 0; pos -= 1) {
-    servo.write(pos);
-    delay(20);
+
+  if (!closed) {
+    for (pos = 90; pos >= 0; pos -= 1) {
+      servo.write(pos);
+      delay(20);
+    }
+    closed = true;
+    return;
   }
 }
