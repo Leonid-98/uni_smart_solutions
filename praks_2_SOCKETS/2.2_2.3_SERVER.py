@@ -17,10 +17,12 @@ GPIO.output(pin_led, 0)
 
 GPIO.setup(pin_matrix, GPIO.OUT)
 GPIO.output(pin_matrix, 1)
+pinout = (16, 20, 26, 6 , 5, 21, 16, 25)
 
 d = {
-        1: [16, 20], 
-        2: [25, 16, 26, 6, 5], 
+        # Needed to be rerfactored from 3, but it works tho
+        1: [pinout[0], pinout[1]], 
+        2: [pinout[7], pinout[0], pinout[2], pinout[3], pinout[4]], 
         3: [16, 20, 26, 6, 5], 
         4: [20, 16, 21, 5], 
         5: [20, 21, 26, 6, 5],
