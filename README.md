@@ -3,7 +3,7 @@
 ### Used hardware for  communication folder:
  - Bluetooth: BT05/06 module 
  - Wi-Fi: ESP8266 based module 
- - UART:  Arduino ⇿ Raspberry Pi (via wires)
+ - UART:  Arduino ⇿ Raspberry Pi (twisted pair)
 
 ### Sensors and misc:
  - Infrared: KY-022 (or similar ones)
