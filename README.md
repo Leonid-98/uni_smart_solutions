@@ -1,4 +1,5 @@
 ## Smart solutions, that  can be simply recreated at home.
+No cool embedded stuff here. Mostly boring Arduino and Raspberry Pi. 
 
 ### Used hardware for  communication folder:
  - Bluetooth: BT05/06 module 
